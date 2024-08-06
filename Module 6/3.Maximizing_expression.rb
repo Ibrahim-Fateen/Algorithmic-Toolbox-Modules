@@ -1,5 +1,10 @@
 # frozen_string_literal: true
 
+# Solved as explained in lectures.
+# By keeping track of the maximum and minimum values that can be obtained from each subexpression
+# we can, at each step, find the minimum and maximum values that can be obtained from the current expression
+# by using the corresponding operation and the minimum and maximum values of the subexpressions.
+
 def max_expression(s)
   n = (s.size + 1) / 2
   dp_max = Array.new(n) { Array.new(n, 0) }

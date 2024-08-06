@@ -1,5 +1,16 @@
 # frozen_string_literal: true
 
+# The problem I found the most challenging.
+
+# We needed to know if the given values could be split equally into 3 groups.
+
+# To solve this, we needed to know what the target, or the sum of each group, should be.
+# A 3d dp array was created, where the first dimension represented the number of values used,
+# the second and third dimensions represented the sum of the first and second groups, respectively.
+# The value of dp[i][j][k] was true if the first i values could be split into two groups with sums j and k.
+
+# If the last value of the dp array was true, then the values could be split into three groups.
+
 def can_split?(values)
   total = values.sum
   return false if total % 3 != 0

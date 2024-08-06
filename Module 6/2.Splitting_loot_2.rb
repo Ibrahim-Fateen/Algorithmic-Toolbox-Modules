@@ -1,5 +1,11 @@
 # frozen_string_literal: true
 
+# Another solution to the problem, "with help from youtube"
+
+# The solution here is done by constructing each group one by one.
+# When constructing a group, only the values not used in previous groups are considered.
+# A group finishes constructing when its sum is equal to the target sum.
+
 def can_split?(values, k_partitions)
   used = Array.new(values.size, false)
   total = values.sum
@@ -22,6 +28,7 @@ def can_split?(values, k_partitions)
     false
   end
 
+  values.sort_by!(&:-@)
   backtrack.call(0, 0, 0)
 end
 
