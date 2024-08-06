@@ -1,5 +1,19 @@
 # frozen_string_literal: true
 
+# The problem here required to count the number of segments that contain a point.
+# Instead of looking through the whole array at every point,
+# The array was sorted to implement binary search.
+
+# ---------
+#   ----
+#     -------------
+#       X
+
+# For the given problem above, one can reach the solution by finding the number of segments
+# that have a left start before the given point
+# and the number of segments that have a right end before the given point.
+# The difference between the two will give the number of segments that contain the point.
+
 def count_segments(segments, points)
   sorted_left = segments.sort_by { |segment| segment[0] }
   sorted_right = segments.sort_by { |segment| segment[1] }

@@ -1,5 +1,17 @@
 # frozen_string_literal: true
 
+# Inversions are defined as the number of pairs (i, j) such that i < j and arr[i] > arr[j].
+# [1, 3, 5, 2, 4, 6] has 3 inversions: (3, 2), (5, 2), and (5, 4).
+# "This is not the same as the number of swaps required to sort the array."
+
+# It was done using merge sort
+# I modified the merge method to count the inversion pairs.
+# The inversion pairs are the number of elements in the left array
+# that are greater than an element in the right array that is placed before it.
+
+# say the left array is [1, 3, 5] and the right array is [2, 4, 6]
+# When merging them, 2 is less than 3 & 5, and 4 is less than 5, resulting in 3 inversion pairs.
+
 def merge_sort(arr)
   return arr, 0 if arr.size < 2
 

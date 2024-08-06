@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# slight modification to binary search to handle duplicates & find the leftmost index of the target.
 def search(arr, targets)
   indicies = []
   targets.each do |target|

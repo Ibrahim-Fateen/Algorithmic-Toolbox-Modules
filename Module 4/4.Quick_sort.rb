@@ -1,5 +1,12 @@
 # frozen_string_literal: true
 
+# Implementation of quick_sort
+# This implementation handles the case when duplicates are present in the array
+# At every step, we choose a pivot, partition the array into 3 parts, and recursively sort the left and right parts
+# From 0..m1-1, all elements are less than the pivot
+# From m1..m2, all elements are equal to the pivot
+# From m2+1..n-1, all elements are greater than the pivot
+
 def quick_sort(arr, l, r)
   while l < r
     m1, m2 = partition3(arr, l, r)

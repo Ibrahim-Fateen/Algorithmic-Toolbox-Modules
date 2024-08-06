@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+# The solution to this problem was given in the problem statement, this was just a matter of implementation.
+
 def closest_points(points)
   n = points.size
   return Float::INFINITY if n == 1

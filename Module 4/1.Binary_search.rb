@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# Elements can be found in a sorted array by looking at half of the elements at a time.
 def binary_search(a, targets)
   indicies = []
   targets.each do |target|
