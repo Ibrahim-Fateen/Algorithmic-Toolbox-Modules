@@ -1,5 +1,8 @@
 # frozen_string_literal: true
 
+# Greedy solution
+# The best decision at each step is to go to the farthest reachable station given the current fuel
+# If there is no station in the reachable range, then the destination is unreachable
 def least_refills(destination, tank, stations)
   current_location = 0
   refills = 0
