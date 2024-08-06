@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+# Just basic implementation of the least common multiple formula.
+
 def lcm(a, b)
   (a * b) / gcd(a, b)
 end

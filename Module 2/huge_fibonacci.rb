@@ -1,5 +1,12 @@
 # frozen_string_literal: true
 
+# Using some insight, the fibonacci numbers mod m have a period of pisano(m), meaning they repeat
+# after pisano(m) numbers. So, we can calculate the fibonacci number at n mod pisano(m) instead of
+# calculating the fibonacci number at n directly.
+# The pisano period of m is the smallest number k such that F(k) mod m = 0 and F(k + 1) mod m = 1,
+# where F(k) is the kth fibonacci number.
+
+
 def huge_fib(n, m)
   return n if n <= 1
 

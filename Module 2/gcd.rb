@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# Used euclidean recursive algorithm to find the greatest common divisor of two numbers
 def gcd(a, b)
   return a if b.zero?
 

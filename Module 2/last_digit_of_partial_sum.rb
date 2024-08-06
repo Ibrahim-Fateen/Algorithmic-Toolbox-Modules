@@ -1,5 +1,10 @@
 # frozen_string_literal: true
 
+# Again the pisano period of 10 is 60
+# To find the sum of Fibonacci numbers from m to n, we can use the formula:
+# sum(F(n)) = F(n + 2) - F(m + 1)
+# And we find the last digit by only storing the last digit of each Fibonacci number
+
 def last_digit_of_partial_sum(m, n)
   return n if n <= 1
 

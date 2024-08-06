@@ -1,5 +1,10 @@
 # frozen_string_literal: true
 
+# Again we need to find the last digit, so we only store the last digit of each Fibonacci number
+# and use 10 as the modulo so pisano = 60
+# The sum of squares of the first n fib numbers is
+# the nth fib number times the (n + 1)th fib number
+
 def last_digit_of_sum_of_squares(n)
   arr = Array.new(2)
   arr[0] = 0

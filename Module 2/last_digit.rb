@@ -1,5 +1,8 @@
 # frozen_string_literal: true
 
+# finding the last number of the nth fibonacci number
+# No need to store every number,
+# just the last digit since adding the last digit of two numbers will give the last digit of the sum
 def last_digit(n)
   arr = Array.new(n)
   arr[0] = 0

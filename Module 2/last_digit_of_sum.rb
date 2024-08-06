@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+# Pisano period of 10 is 60
+# The sum of the first n fibonacci numbers is the (n + 2)th fibonacci number minus 1
 def last_digit_of_sum(n)
   arr = [0, 1, 1]
   pisano10 = 60

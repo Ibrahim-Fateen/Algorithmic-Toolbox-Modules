@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# fibonacci number problem using dynamic programming and clever array manipulation
 def fib(n)
   if n <= 1
     return n
