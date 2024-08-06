@@ -1,5 +1,11 @@
 # frozen_string_literal: true
 
+# This solves the problem of finding the longest subsequence between two sequences.
+# The subsequences do not need to be contiguous.
+# The algorithm uses dynamic programming to store the length of the longest common subsequence at each step.
+# If the elements at the current step are equal, the length of the longest common subsequence is the length of the previous subsequence plus 1.
+# If the elements are different, the length of the longest common subsequence is the maximum of the previous subsequences.
+
 def common_subsequence_length(first, second)
   n = first.size
   m = second.size

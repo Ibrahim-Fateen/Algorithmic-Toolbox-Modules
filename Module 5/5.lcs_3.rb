@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+# This was just a matter of adding a third dimension to the dp array.
+
 def lcs_3(first, second, third)
   n = first.size
   m = second.size
