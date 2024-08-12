@@ -58,8 +58,10 @@ def process_queries(m, queries)
       if node.value == string
         if node.prev.nil?
           hash_table[index] = node.next
+          node.next.prev = nil if node.next
         else
           node.prev.next = node.next
+          node.next.prev = node.prev if node.next
         end
         break
       end
