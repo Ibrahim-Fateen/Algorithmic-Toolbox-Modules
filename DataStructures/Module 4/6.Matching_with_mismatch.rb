@@ -58,7 +58,7 @@ def solve(max_mismatch, text, search)
     mismatch_positions = [find_next_mismatch.call(i, i + search.size - 1, 0, search.size - 1)]
     max_mismatch.times do
       position_in_text = mismatch_positions.last + 1
-      break if position_in_text >= text.size
+      break if position_in_text >= text.size || mismatch_positions.last == -1
 
       position_in_search = position_in_text - i
       mismatch_positions << find_next_mismatch.call(position_in_text, i + search.size - 1, position_in_search, search.size - 1)
@@ -73,3 +73,6 @@ while (k, text, search = gets&.chomp&.split)
   max_mismatch = k.to_i
   solve(max_mismatch, text, search)
 end
+
+# solve(1, 'bbbbbbbbaabaabab', 'bbbbba')
+# solve(2, 'aaabbbaaababbabaab', 'aabab')
