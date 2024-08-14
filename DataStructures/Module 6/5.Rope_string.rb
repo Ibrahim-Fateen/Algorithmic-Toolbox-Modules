@@ -43,6 +43,12 @@ class Node
     current
   end
 
+  def min
+    current = self
+    current = current.left while current.left
+    current
+  end
+
   def find(index)
     if index == @index
       self
@@ -159,15 +165,33 @@ class SplayTree
   end
 
   def cut_left
-    
+    left = @root.left
+    @root.left = nil
+    left&.parent = nil
+    st = SplayTree.new
+    st.root = left
+    [st, self]
   end
 
   def cut_right
-
+    right = @root.right
+    @root.right = nil
+    right&.parent = nil
+    st = SplayTree.new
+    st.root = right
+    [self, st]
   end
 
   def merge(left, right)
+    return left if right.nil?
+    return right if left.nil?
 
+    current = left.root
+    current = current.right while current.right
+    current.right = right.root
+    right.root.parent = current
+    right.root.update_index
+    left
   end
 
   def swap(i, j, k)
