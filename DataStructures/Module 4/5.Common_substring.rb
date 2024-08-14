@@ -84,12 +84,12 @@ def precompute_hashes(string, m1, m2, m3, x)
 end
 
 # binary search for the maximum length of a common substring starting from half of the shortest string
-# while (string1, string2 = gets&.chomp&.split)
-#   solution(string1, string2, m1, m2, m3, x)
-# end
+while (string1, string2 = gets&.chomp&.split)
+  solution(string1, string2, m1, m2, m3, x)
+end
 
 # solution('baababbbbabaababaa', 'babbabaababaabbaabaa', m1, m2, m3, x)
-solution('cool', 'toolbox', m1, m2, m3, x)
+# solution('cool', 'toolbox', m1, m2, m3, x)
 
 # Wrong answer, issue might be "binary search", "common hashes" method or temp variables "(a_, b_)"
 # Issue was common_substring? method, returning true if a was -1
