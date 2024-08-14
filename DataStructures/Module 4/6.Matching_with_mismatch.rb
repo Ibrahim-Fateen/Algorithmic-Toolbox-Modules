@@ -20,7 +20,6 @@ def solve(max_mismatch, text, search)
   t_hash1, t_hash2, t_hash3 = precompute_hashes(text, m1, m2, m3, x)
   p_hash1, p_hash2, p_hash3 = precompute_hashes(search, m1, m2, m3, x)
   positions = []
-  # mismatches = 0
 
   equal_hashes = lambda do |left_t, right_t, left_p, right_p|
     (t_hash1[right_t + 1] - x.pow(right_t - left_t + 1,
@@ -39,10 +38,10 @@ def solve(max_mismatch, text, search)
       -1
     elsif left_t == -1
       -1
-    elsif equal_hashes.call(left_t, right_t, left_p, right_p)
-      -1
     elsif left_t == right_t
       text[left_t] == search[left_p] ? -1 : left_t
+    elsif equal_hashes.call(left_t, right_t, left_p, right_p)
+      -1
     else
       mid = left_p + (right_p - left_p) / 2
       # left substring is text[left_t..left_t + mid - left_p]
@@ -55,28 +54,7 @@ def solve(max_mismatch, text, search)
     end
   end
 
-  # update_mismatches = lambda do |left_t, right_t, left_p, right_p|
-  #   if left_t == right_t
-  #     mismatches += text[left_t] == search[left_p] ? 0 : 1
-  #   elsif left_t < right_t
-  #     mid = left_p + (right_p - left_p) / 2
-  #     mismatches += 1 if text[left_t + mid - left_p] != search[mid]
-  #     unless mismatches > max_mismatch
-  #       unless equal_hashes.call(left_t, left_t + mid - left_p - 1, left_p, mid - 1)
-  #         update_mismatches.call(left_t, left_t + mid - left_p - 1, left_p, mid - 1)
-  #       end
-  #     end
-  #     unless mismatches > max_mismatch
-  #       unless equal_hashes.call(left_t + mid - left_p + 1, right_t, mid + 1, right_p)
-  #         update_mismatches.call(left_t + mid - left_p + 1, right_t, mid + 1, right_p)
-  #       end
-  #     end
-  #   end
-  # end
-
   (0..text.size - search.size).each do |i|
-    mismatches = 0
-    # update_mismatches.call(i, i + search.size - 1, 0, search.size - 1)
     mismatch_positions = [find_next_mismatch.call(i, i + search.size - 1, 0, search.size - 1)]
     max_mismatch.times do
       position_in_text = mismatch_positions.last + 1
@@ -95,7 +73,3 @@ while (k, text, search = gets&.chomp&.split)
   max_mismatch = k.to_i
   solve(max_mismatch, text, search)
 end
-
-# solve(1, 'ababab', 'baaa')
-# solve(2, 'xabcabc', 'ccc')
-# solve(3, 'aaa', 'xxx')
