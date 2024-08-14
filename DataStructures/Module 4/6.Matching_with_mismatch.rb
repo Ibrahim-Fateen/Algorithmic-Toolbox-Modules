@@ -20,6 +20,7 @@ def solve(max_mismatch, text, search)
   t_hash1, t_hash2, t_hash3 = precompute_hashes(text, m1, m2, m3, x)
   p_hash1, p_hash2, p_hash3 = precompute_hashes(search, m1, m2, m3, x)
   positions = []
+  mismatches = 0
 
   equal_hashes = lambda do |left_t, right_t, left_p, right_p|
     (t_hash1[right_t + 1] - x.pow(right_t - left_t + 1,
@@ -33,27 +34,29 @@ def solve(max_mismatch, text, search)
                                                                                                  m3) * p_hash3[left_p]) % m3
   end
 
-  num_mismatches = lambda do |left_t, right_t, left_p, right_p|
-    if left_t > right_t
-      0
-    elsif left_t == right_t
-      text[left_t] == search[left_p] ? 0 : 1
-    else
-      mismatches = 0
+  update_mismatches = lambda do |left_t, right_t, left_p, right_p|
+    if left_t == right_t
+      mismatches += text[left_t] == search[left_p] ? 0 : 1
+    elsif left_t < right_t
       mid = left_p + (right_p - left_p) / 2
       mismatches += 1 if text[left_t + mid - left_p] != search[mid]
-      unless equal_hashes.call(left_t, left_t + mid - left_p - 1, left_p, mid - 1)
-        mismatches += num_mismatches.call(left_t, left_t + mid - left_p - 1, left_p, mid - 1)
+      unless mismatches > max_mismatch
+        unless equal_hashes.call(left_t, left_t + mid - left_p - 1, left_p, mid - 1)
+          update_mismatches.call(left_t, left_t + mid - left_p - 1, left_p, mid - 1)
+        end
       end
-      unless equal_hashes.call(left_t + mid - left_p + 1, right_t, mid + 1, right_p)
-        mismatches += num_mismatches.call(left_t + mid - left_p + 1, right_t, mid + 1, right_p)
+      unless mismatches > max_mismatch
+        unless equal_hashes.call(left_t + mid - left_p + 1, right_t, mid + 1, right_p)
+          update_mismatches.call(left_t + mid - left_p + 1, right_t, mid + 1, right_p)
+        end
       end
-      mismatches
     end
   end
 
   (0..text.size - search.size).each do |i|
-    positions << i if num_mismatches.call(i, i + search.size - 1, 0, search.size - 1) <= max_mismatch
+    mismatches = 0
+    update_mismatches.call(i, i + search.size - 1, 0, search.size - 1)
+    positions << i if mismatches <= max_mismatch
   end
 
   puts "#{positions.size} #{positions.join(' ')}"
