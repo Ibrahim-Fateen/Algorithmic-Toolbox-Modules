@@ -18,11 +18,11 @@ class Node
     if value < @value
       return self if @left.nil?
 
-      @left&.find(value)
+      @left.find(value)
     else
       return self if @right.nil?
 
-      @right&.find(value)
+      @right.find(value)
     end
   end
 
@@ -160,14 +160,15 @@ class SplayTree
     parent = @root.find(value)
     return if parent.value == value
 
+    node = Node.new(value)
+    node.parent = parent
     if parent.value > value
-      parent.left = Node.new(value)
-      parent.left.parent = parent
+      parent.left = node
     else
-      parent.right = Node.new(value)
-      parent.right.parent = parent
+      parent.right = node
     end
-    parent.update_height_and_sum
+    node.splay
+    @root = node
   end
 
   def find(value)
@@ -303,6 +304,32 @@ end
 
 # commands = [
 #   ['+', 1],
+#   ['+', 2],
+#   ['+', 3],
+#   ['+', 5],
+#   ['+', 4],
+#   ['+', 7],
+#   ['s', 9, 10],
+#   ['s', 1, 7],
+#   ['?', -19],
+#   ['s', 1, 10],
+#   ['?', 1],
+#   ['-', 1],
+#   ['?', 1],
+#   ['?', 2],
+#   ['-', 2],
+#   ['?', 2],
+#   ['-', 3],
+#   ['-', 5],
+#   ['-', 4],
+#   ['-', 7],
+#   ['s', 9, 10],
+#   ['s', 1, 7],
+#   ['?', -19],
+#   ['?', 1], # find when empty
+#   ['-', 1], # delete when empty
+#   ['+', 1], # restart all operations
+#   ['?', 1],
 #   ['+', 2],
 #   ['+', 3],
 #   ['+', 5],
