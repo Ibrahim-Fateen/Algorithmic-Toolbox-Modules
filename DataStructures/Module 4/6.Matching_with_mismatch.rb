@@ -12,13 +12,13 @@ def precompute_hashes(string, m1, m2, m3, x)
   [h1, h2, h3]
 end
 
-def solve(max_mismatch, text, search)
+def solve(max_mismatch, text, pattern)
   m1 = 10**9 + 7
   m2 = 10**9 + 9
   m3 = 10**9 + 21
   x = rand(1..10**9)
-  t_hash1, t_hash2, t_hash3 = precompute_hashes(text, m1, m2, m3, x)
-  p_hash1, p_hash2, p_hash3 = precompute_hashes(search, m1, m2, m3, x)
+  t_hash1, t_hash2, t_hash3 = precompute_hashes(text, m1, m2, m3, x) # O(|T|) runtime
+  p_hash1, p_hash2, p_hash3 = precompute_hashes(pattern, m1, m2, m3, x) # O(|P|) runtime
   positions = []
 
   equal_hashes = lambda do |left_t, right_t, left_p, right_p|
@@ -32,6 +32,7 @@ def solve(max_mismatch, text, search)
                                     m3) * t_hash3[left_t]) % m3 == (p_hash3[right_p + 1] - x.pow(right_p - left_p + 1,
                                                                                                  m3) * p_hash3[left_p]) % m3
   end
+  # O(1) runtime
 
   find_next_mismatch = lambda do |left_t, right_t, left_p, right_p|
     if left_t > right_t
@@ -39,7 +40,7 @@ def solve(max_mismatch, text, search)
     elsif left_t == -1
       -1
     elsif left_t == right_t
-      text[left_t] == search[left_p] ? -1 : left_t
+      text[left_t] == pattern[left_p] ? -1 : left_t
     elsif equal_hashes.call(left_t, right_t, left_p, right_p)
       -1
     else
@@ -53,15 +54,19 @@ def solve(max_mismatch, text, search)
       end
     end
   end
+  # O(log|P|) runtime
 
-  (0..text.size - search.size).each do |i|
-    mismatch_positions = [find_next_mismatch.call(i, i + search.size - 1, 0, search.size - 1)]
+  # Total runtime is O(|T| * k * log|P|)
+  # Maximum runtime on the order of 10^7
+  (0..text.size - pattern.size).each do |i|
+    # Runtime at each index "i" for "k" mismatches is O(k * log|P|)
+    mismatch_positions = [find_next_mismatch.call(i, i + pattern.size - 1, 0, pattern.size - 1)]
     max_mismatch.times do
       position_in_text = mismatch_positions.last + 1
       break if position_in_text >= text.size || mismatch_positions.last == -1
 
-      position_in_search = position_in_text - i
-      mismatch_positions << find_next_mismatch.call(position_in_text, i + search.size - 1, position_in_search, search.size - 1)
+      position_in_pattern = position_in_text - i
+      mismatch_positions << find_next_mismatch.call(position_in_text, i + pattern.size - 1, position_in_pattern, pattern.size - 1)
     end
     positions << i if mismatch_positions.last == -1 || mismatch_positions.size <= max_mismatch
   end
@@ -73,6 +78,3 @@ while (k, text, search = gets&.chomp&.split)
   max_mismatch = k.to_i
   solve(max_mismatch, text, search)
 end
-
-# solve(1, 'bbbbbbbbaabaabab', 'bbbbba')
-# solve(2, 'aaabbbaaababbabaab', 'aabab')
