@@ -33,6 +33,7 @@ def solve(max_mismatch, text, pattern)
                                                                                                  m3) * p_hash3[left_p]) % m3
   end
   # O(1) runtime
+  # Slow O(1) ???
 
   find_next_mismatch = lambda do |left_t, right_t, left_p, right_p|
     if left_t > right_t
@@ -78,3 +79,27 @@ while (k, text, search = gets&.chomp&.split)
   max_mismatch = k.to_i
   solve(max_mismatch, text, search)
 end
+
+# start_time = Time.now
+# 50_000.times { solve(2, 'abcd', 'ab') } # total size of T doesn't exceed 200_000, P doesn't exceed 100_000
+# # Takes on average 0.43 seconds to finish, time limit is 10.
+#
+# 5_000.times { solve(2, 'abcd' * 10, 'ab' * 10) } # total size of T doesn't exceed 200_000, P doesn't exceed 100_000
+# # Takes on average 0.8 seconds to finish, time limit is 10.
+#
+# 500.times { solve(2, 'abcd' * 100, 'ab' * 100) } # total size of T doesn't exceed 200_000, P doesn't exceed 100_000
+# # Takes on average 1.2 seconds to finish, time limit is 10.
+#
+# 50.times { solve(2, 'abcd' * 1_000, 'ab' * 1_000) } # total size of T doesn't exceed 200_000, P doesn't exceed 100_000
+# # Takes on average 1.7 seconds to finish, time limit is 10.
+#
+# 5.times { solve(2, 'abcd' * 10_000, 'ab' * 10_000) } # total size of T doesn't exceed 200_000, P doesn't exceed 100_000
+# # Takes on average 2.3 seconds to finish, time limit is 10.
+#
+# 2.times { solve(2, 'abcd' * 50_000, 'ab' * 50_000) } # total size of T doesn't exceed 200_000, P doesn't exceed 100_000
+# # Takes on average 5.5 seconds to finish, time limit is 10.
+#
+# solve(5, 'a' * 200_000, 'b' * 100_000) # total size of T doesn't exceed 200_000, P doesn't exceed 100_000
+# # Takes on average 5.3 seconds to finish, time limit is 10.
+# end_time = Time.now
+# puts "Time: #{end_time - start_time} seconds"
