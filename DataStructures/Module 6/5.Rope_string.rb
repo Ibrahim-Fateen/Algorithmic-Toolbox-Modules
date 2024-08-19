@@ -12,18 +12,21 @@ class Node
   end
 
   def update_index
-    # Call when merging???
-    @index = successor.index + 1
+    @index = (predecessor&.index || -1) + 1
     next_&.update_index
   end
 
-  def successor
+  def predecessor
     if @left
       @left.max
     else
-      parent = self
-      parent = parent.parent while parent.parent && parent.parent.right == parent
-      parent
+      current = self
+      while current.parent
+        return current.parent if current.parent.right == current
+
+        current = current.parent
+      end
+      current.parent
     end
   end
 
@@ -33,7 +36,7 @@ class Node
     else
       parent = self
       parent = parent.parent while parent.parent && parent.parent.left == parent
-      parent
+      parent unless parent == self
     end
   end
 
@@ -74,68 +77,86 @@ class Node
   end
 
   def zig
-    if @parent.left == self
-      @parent.left = @right
-      @right = @parent
-      @right.parent = self
-    elsif @parent.right == self
-      @parent.right = @left
-      @left = @parent
-      @left.parent = self
+    root = @parent
+    a = @left
+    b = @right
+    if root.left == self
+      @right = root
+      root.left = b
+      b&.parent = root
+    else
+      @left = root
+      root.right = a
+      a&.parent = root
     end
+    root.parent = self
     @parent = nil
   end
 
   def zig_zig
-    grandparent = @parent.parent
-    if grandparent.left == @parent
+    parent = @parent
+    grandparent = parent.parent
+    root = grandparent.parent
+    if grandparent.left == parent
       b = @right
-      c = @parent.right
+      c = parent.right
       grandparent.left = c
-      @parent.left = b
-      @parent.right = grandparent
-      @parent.parent = self
-      @parent, grandparent.parent = grandparent.parent, @parent
-      @parent&.left == grandparent ? @parent&.left = self : @parent&.right = self
-      @right = grandparent.parent
+      c&.parent = grandparent
+      parent.left = b
+      b&.parent = parent
+      @right = parent
+      parent.right = grandparent
     else
-      b = @left
-      c = @parent.left
-      grandparent.right = c
-      @parent.right = b
-      @parent.left = grandparent
-      @parent.parent = self
-      @parent, grandparent.parent = grandparent.parent, @parent
-      @parent&.left == grandparent ? @parent&.left = self : @parent&.right = self
-      @left = grandparent.parent
+      b = parent.left
+      c = @left
+      grandparent.right = b
+      b&.parent = grandparent
+      parent.right = c
+      c&.parent = parent
+      @left = parent
+      parent.left = grandparent
     end
+    grandparent.parent = parent
+    parent.parent = self
+    @parent = root
+    return unless root
+
+    root.left == grandparent ? root.left = self : root.right = self
   end
 
   def zig_zag
-    grandparent = @parent.parent
-    if grandparent.left == @parent
+    parent = @parent
+    grandparent = parent.parent
+    root = grandparent.parent
+    if parent.left == self
       a = @left
       b = @right
-      @left = @parent
-      @right = grandparent
-      @parent = grandparent.parent
-      grandparent.parent = self
-      @left.parent = self
-      @left.right = a
-      grandparent.left = b
-      @parent&.left == grandparent ? @parent.left = self : @parent.right = self
+      grandparent.right = a
+      a&.parent = grandparent
+      parent.left = b
+      b&.parent = parent
+      @left = grandparent
+      @right = parent
     else
       a = @left
       b = @right
-      @left = grandparent
-      @right = @parent
-      @parent = grandparent.parent
-      grandparent.parent = self
-      @right.parent = self
-      @right.left = b
-      grandparent.right = a
-      @parent&.left == grandparent ? @parent.left = self : @parent.right = self
+      grandparent.left = b
+      b&.parent = grandparent
+      parent.right = a
+      a&.parent = parent
+      @left = parent
+      @right = grandparent
     end
+    grandparent.parent = self
+    parent.parent = self
+    @parent = root
+    return unless root
+
+    root.left == grandparent ? root.left = self : root.right = self
+  end
+
+  def to_s
+    @key
   end
 end
 
@@ -159,7 +180,7 @@ class SplayTree
   def splay(index)
     return if @root.nil?
 
-    current = @root.find(index)
+    current = index == -1 ? @root.min : @root.find(index)
     current.splay
     @root = current
   end
@@ -182,15 +203,34 @@ class SplayTree
     [self, st]
   end
 
-  def merge(left, right)
-    return left if right.nil?
-    return right if left.nil?
+  def merge(left, right, final_merge: false, at_start: false)
+    if left.nil? || left.root.nil?
+      right.root.min.update_index
+      return right
+    end
+    if right.nil? || right.root.nil?
+      left.root.min.update_index
+      return left
+    end
 
-    current = left.root
-    current = current.right while current.right
-    current.right = right.root
-    right.root.parent = current
-    right.root.update_index
+    if final_merge
+      if at_start
+        right.root.right = left.root
+        left.root.parent = right.root
+        right.root.min.update_index
+        return right
+      end
+      right.root.right = left.root.right
+      right.root.right&.parent = right.root
+      left.root.right = right.root
+      right.root.parent = left.root
+    else
+      current = left.root.max
+      # current = current.right while current&.right
+      right.root&.parent = current
+      current.right = right.root
+    end
+    right.root.min.update_index
     left
   end
 
@@ -198,10 +238,10 @@ class SplayTree
     splay(i)
     left_i, right_i = cut_left
     right_i.splay(j)
-    left_j, right_j = cut_right
+    left_j, right_j = right_i.cut_right
     tree = merge(left_i, right_j)
-    tree.splay(k)
-    @root = merge(tree, left_j)&.root
+    tree.splay(k - 1)
+    @root = merge(tree, left_j, final_merge: true, at_start: k.zero?).root
   end
 
   def to_s
@@ -222,14 +262,24 @@ class SplayTree
   end
 end
 
-string = gets.chomp
-n = gets.chomp.to_i
-commands = []
-n.times do
-  commands << gets.chomp.split.map(&:to_i)
-end
+# string = gets.chomp
+# n = gets.chomp.to_i
+# commands = []
+# n.times do
+#   commands << gets.chomp.split.map(&:to_i)
+# end
 
-puts word_after_commands(string, commands)
+# string = "hlelowrold"
+# commands = [[1, 1, 2], [6, 6, 7]]
+# string = 'abcdef'
+# commands = [[0, 1, 1], [4, 5, 0]]
+# string = 'abcdef'
+# commands = [[0, 0, 5], [4, 4, 5], [5, 5, 0]]
+# string = 'birhmai'
+# commands = [[1, 1, 0], [5, 6, 3], [4, 4, 5]]
+
+string = 'The quick brown fox jumps over the lazy dog.'
+commands = [[1, 2, 4], [5, 5, 0], [9, 12, 4], [20, 25, 0]]
 
 def word_after_commands(string, commands)
   tree = SplayTree.new
@@ -239,3 +289,7 @@ def word_after_commands(string, commands)
   end
   tree
 end
+
+puts word_after_commands(string, commands)
+
+

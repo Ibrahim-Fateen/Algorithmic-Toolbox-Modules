@@ -299,7 +299,7 @@ end
 sum = lambda do |l, r|
   x = bst.root ? bst.sum_range((l + x) % M, (r + x) % M) : x
   puts x
-end # test thissssss, and test x
+end
 
 n = gets.to_i
 n.times do
