@@ -269,6 +269,7 @@ commands = []
 n.times do
   commands << gets.chomp.split.map(&:to_i)
 end
+
 puts word_after_commands(string, commands)
 
 # string = 'abcdef'

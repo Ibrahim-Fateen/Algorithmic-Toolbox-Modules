@@ -264,6 +264,7 @@ end
 tree = SplayTree.new
 M = 1_000_000_001
 x = 0
+
 add = lambda do |a|
   tree.add((a + x) % M)
   # tree.add(a)

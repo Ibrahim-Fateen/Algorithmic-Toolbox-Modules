@@ -22,18 +22,15 @@ def solve(max_mismatch, text, pattern)
   positions = []
 
   equal_hashes = lambda do |left_t, right_t, left_p, right_p|
-    (t_hash1[right_t + 1] - x.pow(right_t - left_t + 1,
-                                  m1) * t_hash1[left_t]) % m1 == (p_hash1[right_p + 1] - x.pow(right_p - left_p + 1,
-                                                                                               m1) * p_hash1[left_p]) % m1 &&
-      (t_hash2[right_t + 1] - x.pow(right_t - left_t + 1,
-                                    m2) * t_hash2[left_t]) % m2 == (p_hash2[right_p + 1] - x.pow(right_p - left_p + 1,
-                                                                                                 m2) * p_hash2[left_p]) % m2 &&
-      (t_hash3[right_t + 1] - x.pow(right_t - left_t + 1,
-                                    m3) * t_hash3[left_t]) % m3 == (p_hash3[right_p + 1] - x.pow(right_p - left_p + 1,
-                                                                                                 m3) * p_hash3[left_p]) % m3
+    x_power_t = x.pow(right_t - left_t + 1)
+    x_power_p = x.pow(right_p - left_p + 1)
+    (t_hash1[right_t + 1] - (x_power_t % m1) * t_hash1[left_t]) % m1 == (p_hash1[right_p + 1] - (x_power_p % m1) * p_hash1[left_p]) % m1 &&
+      (t_hash2[right_t + 1] - (x_power_t % m2) * t_hash2[left_t]) % m2 == (p_hash2[right_p + 1] - (x_power_p % m2) * p_hash2[left_p]) % m2 &&
+      (t_hash3[right_t + 1] - (x_power_t % m3) * t_hash3[left_t]) % m3 == (p_hash3[right_p + 1] - (x_power_p % m3) * p_hash3[left_p]) % m3
   end
   # O(1) runtime
   # Slow O(1) ???
+  # Slower than previous version
 
   find_next_mismatch = lambda do |left_t, right_t, left_p, right_p|
     if left_t > right_t
@@ -81,6 +78,9 @@ while (k, text, search = gets&.chomp&.split)
 end
 
 # start_time = Time.now
+# 100_000.times { solve(1, 'ab', 'a') } # total size of T doesn't exceed 200_000, P doesn't exceed 100_000
+# # Takes on average 0.5 seconds to finish, time limit is 10.
+#
 # 50_000.times { solve(2, 'abcd', 'ab') } # total size of T doesn't exceed 200_000, P doesn't exceed 100_000
 # # Takes on average 0.43 seconds to finish, time limit is 10.
 #
@@ -101,5 +101,7 @@ end
 #
 # solve(5, 'a' * 200_000, 'b' * 100_000) # total size of T doesn't exceed 200_000, P doesn't exceed 100_000
 # # Takes on average 5.3 seconds to finish, time limit is 10.
+#
+# solve(5, 'a' * 200_000, 'b' * 5 + 'a' * 100_000) # total size of T doesn't exceed 200_000, P doesn't exceed 100_000
 # end_time = Time.now
 # puts "Time: #{end_time - start_time} seconds"
