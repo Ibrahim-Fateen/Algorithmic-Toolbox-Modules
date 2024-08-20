@@ -22,15 +22,18 @@ def solve(max_mismatch, text, pattern)
   positions = []
 
   equal_hashes = lambda do |left_t, right_t, left_p, right_p|
-    x_power_t = x.pow(right_t - left_t + 1)
-    x_power_p = x.pow(right_p - left_p + 1)
-    (t_hash1[right_t + 1] - (x_power_t % m1) * t_hash1[left_t]) % m1 == (p_hash1[right_p + 1] - (x_power_p % m1) * p_hash1[left_p]) % m1 &&
-      (t_hash2[right_t + 1] - (x_power_t % m2) * t_hash2[left_t]) % m2 == (p_hash2[right_p + 1] - (x_power_p % m2) * p_hash2[left_p]) % m2 &&
-      (t_hash3[right_t + 1] - (x_power_t % m3) * t_hash3[left_t]) % m3 == (p_hash3[right_p + 1] - (x_power_p % m3) * p_hash3[left_p]) % m3
+    (t_hash1[right_t + 1] - x.pow(right_t - left_t + 1,
+                                  m1) * t_hash1[left_t]) % m1 == (p_hash1[right_p + 1] - x.pow(right_p - left_p + 1,
+                                                                                               m1) * p_hash1[left_p]) % m1 &&
+      (t_hash2[right_t + 1] - x.pow(right_t - left_t + 1,
+                                    m2) * t_hash2[left_t]) % m2 == (p_hash2[right_p + 1] - x.pow(right_p - left_p + 1,
+                                                                                                 m2) * p_hash2[left_p]) % m2 &&
+      (t_hash3[right_t + 1] - x.pow(right_t - left_t + 1,
+                                    m3) * t_hash3[left_t]) % m3 == (p_hash3[right_p + 1] - x.pow(right_p - left_p + 1,
+                                                                                                 m3) * p_hash3[left_p]) % m3
   end
   # O(1) runtime
   # Slow O(1) ???
-  # Slower than previous version
 
   find_next_mismatch = lambda do |left_t, right_t, left_p, right_p|
     if left_t > right_t
@@ -61,9 +64,9 @@ def solve(max_mismatch, text, pattern)
     mismatch_positions = [find_next_mismatch.call(i, i + pattern.size - 1, 0, pattern.size - 1)]
     max_mismatch.times do
       position_in_text = mismatch_positions.last + 1
-      break if position_in_text >= text.size || mismatch_positions.last == -1
-
       position_in_pattern = position_in_text - i
+      break if position_in_text >= text.size || mismatch_positions.last == -1 || position_in_pattern >= pattern.size
+
       mismatch_positions << find_next_mismatch.call(position_in_text, i + pattern.size - 1, position_in_pattern, pattern.size - 1)
     end
     positions << i if mismatch_positions.last == -1 || mismatch_positions.size <= max_mismatch
