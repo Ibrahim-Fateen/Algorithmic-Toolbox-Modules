@@ -1,30 +1,24 @@
 # frozen_string_literal: true
 
-def precompute_hashes(string, m1, m2, x)
+def precompute_hashes(string, m1, x)
   h1 = [0]
-  h2 = [0]
   (1..string.size).each do |i|
     h1[i] = (x * h1[i - 1] + string[i - 1].ord) % m1
-    h2[i] = (x * h2[i - 1] + string[i - 1].ord) % m2
   end
-  [h1, h2]
+  h1
 end
 
 def solve(max_mismatch, text, pattern)
   m1 = 10**9 + 7
-  m2 = 10**9 + 9
   x = rand(1..10**9)
-  t_hash1, t_hash2 = precompute_hashes(text, m1, m2, x) # O(|T|) runtime
-  p_hash1, p_hash2 = precompute_hashes(pattern, m1, m2, x) # O(|P|) runtime
+  t_hash1 = precompute_hashes(text, m1, x) # O(|T|) runtime
+  p_hash1 = precompute_hashes(pattern, m1, x) # O(|P|) runtime
   positions = []
 
   equal_hashes = lambda do |left_t, right_t, left_p, right_p|
     (t_hash1[right_t + 1] - x.pow(right_t - left_t + 1,
                                   m1) * t_hash1[left_t]) % m1 == (p_hash1[right_p + 1] - x.pow(right_p - left_p + 1,
-                                                                                               m1) * p_hash1[left_p]) % m1 &&
-      (t_hash2[right_t + 1] - x.pow(right_t - left_t + 1,
-                                    m2) * t_hash2[left_t]) % m2 == (p_hash2[right_p + 1] - x.pow(right_p - left_p + 1,
-                                                                                                 m2) * p_hash2[left_p]) % m2
+                                                                                               m1) * p_hash1[left_p]) % m1
   end
   # O(1) runtime
   # Slow O(1) ???
@@ -36,13 +30,14 @@ def solve(max_mismatch, text, pattern)
       -1
     elsif left_t == right_t
       text[left_t] == pattern[left_p] ? -1 : left_t
-    elsif equal_hashes.call(left_t, right_t, left_p, right_p)
+    elsif equal_hashes.call(left_t, right_t, left_p, right_p) && text[left_t..right_t] == pattern[left_p..right_p]
       -1
     else
       mid = left_p + (right_p - left_p) / 2
       # left substring is text[left_t..left_t + mid - left_p]
       # right substring is text[left_t + mid - left_p + 1..right_t]
-      if equal_hashes.call(left_t, left_t + mid - left_p, left_p, mid)
+      if equal_hashes.call(left_t, left_t + mid - left_p, left_p, mid) &&
+         text[left_t..left_t + mid - left_p] == pattern[left_p..mid]
         find_next_mismatch.call(left_t + mid - left_p + 1, right_t, mid + 1, right_p)
       else
         find_next_mismatch.call(left_t, left_t + mid - left_p, left_p, mid)
@@ -61,7 +56,8 @@ def solve(max_mismatch, text, pattern)
       position_in_pattern = position_in_text - i
       break if position_in_text >= text.size || mismatch_positions.last == -1 || position_in_pattern >= pattern.size
 
-      mismatch_positions << find_next_mismatch.call(position_in_text, i + pattern.size - 1, position_in_pattern, pattern.size - 1)
+      mismatch_positions << find_next_mismatch.call(position_in_text, i + pattern.size - 1, position_in_pattern, 
+                                                    pattern.size - 1)
     end
     positions << i if mismatch_positions.last == -1 || mismatch_positions.size <= max_mismatch
   end
