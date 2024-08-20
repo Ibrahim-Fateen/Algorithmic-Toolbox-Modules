@@ -1,24 +1,21 @@
 # frozen_string_literal: true
 
-def precompute_hashes(string, m1, m2, m3, x)
+def precompute_hashes(string, m1, m2, x)
   h1 = [0]
   h2 = [0]
-  h3 = [0]
   (1..string.size).each do |i|
     h1[i] = (x * h1[i - 1] + string[i - 1].ord) % m1
     h2[i] = (x * h2[i - 1] + string[i - 1].ord) % m2
-    h3[i] = (x * h3[i - 1] + string[i - 1].ord) % m3
   end
-  [h1, h2, h3]
+  [h1, h2]
 end
 
 def solve(max_mismatch, text, pattern)
   m1 = 10**9 + 7
   m2 = 10**9 + 9
-  m3 = 10**9 + 21
   x = rand(1..10**9)
-  t_hash1, t_hash2, t_hash3 = precompute_hashes(text, m1, m2, m3, x) # O(|T|) runtime
-  p_hash1, p_hash2, p_hash3 = precompute_hashes(pattern, m1, m2, m3, x) # O(|P|) runtime
+  t_hash1, t_hash2 = precompute_hashes(text, m1, m2, x) # O(|T|) runtime
+  p_hash1, p_hash2 = precompute_hashes(pattern, m1, m2, x) # O(|P|) runtime
   positions = []
 
   equal_hashes = lambda do |left_t, right_t, left_p, right_p|
@@ -27,10 +24,7 @@ def solve(max_mismatch, text, pattern)
                                                                                                m1) * p_hash1[left_p]) % m1 &&
       (t_hash2[right_t + 1] - x.pow(right_t - left_t + 1,
                                     m2) * t_hash2[left_t]) % m2 == (p_hash2[right_p + 1] - x.pow(right_p - left_p + 1,
-                                                                                                 m2) * p_hash2[left_p]) % m2 &&
-      (t_hash3[right_t + 1] - x.pow(right_t - left_t + 1,
-                                    m3) * t_hash3[left_t]) % m3 == (p_hash3[right_p + 1] - x.pow(right_p - left_p + 1,
-                                                                                                 m3) * p_hash3[left_p]) % m3
+                                                                                                 m2) * p_hash2[left_p]) % m2
   end
   # O(1) runtime
   # Slow O(1) ???
